@@ -6,6 +6,8 @@
 http://服务器ip:端口/live?platform=平台&rid=直播地址参数(&proxy=on)
 播放直播。
 
+通过config.conf文件端口、stock5代理等相关信息
+
 platform：平台
 
 斗鱼：douyu
