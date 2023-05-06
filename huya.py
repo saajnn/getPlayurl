@@ -1,5 +1,3 @@
-# 获取虎牙直播的真实流媒体地址。
-# 虎牙"一起看"频道的直播间可能会卡顿
 import os
 import re
 import time
@@ -83,7 +81,7 @@ class HuYa:
                             else:
                                 line = url[:url.rindex('/') + 1] + line
                         if line.startswith('http'):
-                            # r.close()
+                            r.close()
                             break
                 r = requests.get(line, headers=header, stream=True)
                 count = 0

@@ -15,25 +15,26 @@ if os.path.exists('config.conf'):
                 confvalue = confvalue.split('#')[0].strip()
                 locals()[confname] = confvalue
 
-if not 'stock5' in locals():
-    stock5 = 'off'
-if not 'stock5Host' in locals():
-    stock5Host = '127.0.0.1'
-if not 'stock5Port' in locals():
-    stock5Port = 1081
-
-if stock5 == 'on':
-    import socket
-    import socks
-    socks.set_default_proxy(socks.SOCKS5, stock5Host, int(stock5Port))
-    socket.socket = socks.socksocket
+if not 'proxyHost' in locals():
+    proxyHost = '127.0.0.1'
+if not 'proxyPort' in locals():
+    proxyPort = 1081
+if not 'proxyProtocol' in locals():
+    proxyProtocol = 'http'
 
 class Proxy:
-    def proxy_m3u8(self, url, baseurl, header):
+    def proxy_m3u8(self, url, baseurl, header, proxy='off'):
         m3u8List = []
         proxyhead = baseurl + '/proxy?ts_url='
+        if proxy == 'on':
+            proxies = {
+                "http": "{}://{}:{}".format(proxyProtocol, proxyHost, proxyPort),
+                "https": "{}://{}:{}".format(proxyProtocol, proxyHost, proxyPort)
+            }
+        else:
+            proxies = {}
         try:
-            r = requests.get(url, headers=header, stream=True, allow_redirects=False, verify=False)
+            r = requests.get(url, headers=header, stream=True, allow_redirects=False, verify=False, proxies=proxies)
             if 'Content-Type' in r.headers and 'video' in r.headers['Content-Type']:
                 r.close()
                 url = '/proxy?ts_url=' + b64encode(url.encode("utf-8")).decode("utf-8") + '&headers=' + b64encode(json.dumps(header).encode("utf-8")).decode("utf-8")
@@ -41,7 +42,7 @@ class Proxy:
             elif 'Location' in r.headers and '#EXTM3U' not in r.text:
                 r.close()
                 url = r.headers['Location']
-                r = requests.get(url, headers=header, stream=True, allow_redirects=False, verify=False)
+                r = requests.get(url, headers=header, stream=True, allow_redirects=False, verify=False, proxies=proxies)
             start = 0
             posD = -1
             posDISList = []
@@ -61,7 +62,7 @@ class Proxy:
                             line = url[:url.index('/', 8)] + line
                         else:
                             line = url[:url.rindex('/') + 1] + line
-                    line = proxyhead + b64encode(line.encode("utf-8")).decode("utf-8") + '&headers=' + b64encode(json.dumps(header).encode("utf-8")).decode("utf-8")
+                    line = proxyhead + b64encode(line.encode("utf-8")).decode("utf-8") + '&headers=' + b64encode(json.dumps(header).encode("utf-8")).decode("utf-8")+ '&proxy=' + proxy
                 if EXK_str != '':
                     line = EXK_str.replace(oURI, line)
                 m3u8List.append(line)
