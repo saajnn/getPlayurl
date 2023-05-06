@@ -1,5 +1,4 @@
 import re
-import sys
 import json
 import requests
 
@@ -86,6 +85,16 @@ class DouYin:
             if not hlsmap:
                 return ''
             mediamap = json.loads("{" + hlsmap[0] + "}")
-            url = mediamap["hls_pull_url_map"]["FULL_HD1"]
+            urlDict = {}
+            for ratio in mediamap["hls_pull_url_map"]:
+                if ratio == 'FULL_HD1':
+                    urlDict.update({0: mediamap["hls_pull_url_map"][ratio]})
+                elif ratio == 'HD1':
+                    urlDict.update({1: mediamap["hls_pull_url_map"][ratio]})
+                elif ratio == 'SD1':
+                    urlDict.update({2: mediamap["hls_pull_url_map"][ratio]})
+                else:
+                    urlDict.update({3: mediamap["hls_pull_url_map"][ratio]})
+            key = sorted(urlDict)[0]
+            url = urlDict[key]
         return url
-
