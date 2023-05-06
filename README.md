@@ -42,7 +42,9 @@ off/不填/不添加proxy参数：直链
 
 阿里系使用说明：
 
-爬虫参考https://github.com/lm317379829/PyramidStore/tree/pyramid/plugin中py_zhaozy.py、py_yiso.py、py_pansou.py。
+爬虫参考
+https://github.com/lm317379829/PyramidStore/tree/pyramid/plugin
+中py_zhaozy.py、py_yiso.py、py_pansou.py。
 
 获取文件列表：地址:端口/ali_list?item=base64编码后的视频参数&display_file_size=是否显示文件大小
 
